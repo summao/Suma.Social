@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Neo4jClient;
 using Suma.Social.Helpers;
 
 namespace Suma.Social
@@ -33,6 +34,10 @@ namespace Suma.Social
 
             services.AddControllers();
             //services.Configure<Key>(Configuration.GetSection("Key"));
+
+            var neo4jClient = new GraphClient(new Uri("http://localhost:7474/db/data"), "neo4j", "w5324164");
+            neo4jClient.ConnectAsync();
+            services.AddSingleton<IGraphClient>(neo4jClient);
 
             var secret = Encoding.ASCII.GetBytes(Configuration["Key:Secret"]);
             services.AddAuthentication(a =>
