@@ -1,4 +1,5 @@
 using System;
+using Neo4j.Driver;
 
 namespace Suma.Social.Entities
 {
@@ -6,6 +7,6 @@ namespace Suma.Social.Entities
     {
         public string Id { get; set; }
         public string Text { get; set; }
-        public DateTime Created { get; set; }
+        public DateTimeOffset Created { get; set; }
     }
 }

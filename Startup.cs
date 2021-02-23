@@ -1,21 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Neo4jClient;
-using Suma.Social.Helpers;
+using Neo4j.Driver;
+using Suma.Social.Repositories;
 
 namespace Suma.Social
 {
@@ -35,9 +29,8 @@ namespace Suma.Social
             services.AddControllers();
             //services.Configure<Key>(Configuration.GetSection("Key"));
 
-            var neo4jClient = new GraphClient(new Uri("http://localhost:7474/db/data"), "neo4j", "w5324164");
-            neo4jClient.ConnectAsync();
-            services.AddSingleton<IGraphClient>(neo4jClient);
+            services.AddSingleton(GraphDatabase.Driver("bolt://localhost:7687", AuthTokens.Basic("neo4j", "5324164")));
+            services.AddScoped<INeoFeedRepository, NeoFeedRepository>();
 
             var secret = Encoding.ASCII.GetBytes(Configuration["Key:Secret"]);
             services.AddAuthentication(a =>
