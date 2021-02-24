@@ -5,6 +5,7 @@ using Suma.Social.Repositories;
 namespace Suma.Social.Controllers
 {
     [ApiController]
+    [Route("[controller]")]
     public class FeedsControllers : ControllerBase
     {
         private readonly INeoFeedRepository _neoFeedRepository;
@@ -16,7 +17,7 @@ namespace Suma.Social.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var feeds = await _neoFeedRepository.GetAsync();
+            var feeds = await _neoFeedRepository.GetAsync(1);
             return Ok(feeds);
         }
     }

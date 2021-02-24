@@ -8,7 +8,7 @@ namespace Suma.Social.Repositories
 {
     public interface INeoFeedRepository
     {
-        Task<IEnumerable<Feed>> GetAsync();
+        Task<IEnumerable<Feed>> GetAsync(int postedUserId);
     }
 
     public class NeoFeedRepository : INeoFeedRepository
@@ -20,7 +20,7 @@ namespace Suma.Social.Repositories
             _driver = driver;
         }
 
-        public async Task<IEnumerable<Feed>> GetAsync()
+        public async Task<IEnumerable<Feed>> GetAsync(int postedUserId)
         {
             var session = _driver.AsyncSession();
             IResultCursor cursor;
@@ -28,7 +28,7 @@ namespace Suma.Social.Repositories
             try
             {
                 cursor = await session.RunAsync(
-                    @"MATCH (:Person{id:1})-[Post]->(f:Feed) 
+                    $@"MATCH (:Person{{ id:{ postedUserId } }})-[Post]->(f:Feed) 
                     RETURN f.id as id,
                         f.text as text,
                         f.created as created"
