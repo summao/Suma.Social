@@ -6,10 +6,10 @@ namespace Suma.Social.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class FeedsControllers : ControllerBase
+    public class FeedsController : ControllerBase
     {
         private readonly INeoFeedRepository _neoFeedRepository;
-        public FeedsControllers(INeoFeedRepository neoFeedRepository)
+        public FeedsController(INeoFeedRepository neoFeedRepository)
         {
             _neoFeedRepository = neoFeedRepository;
         }
