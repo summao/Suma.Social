@@ -15,6 +15,8 @@ namespace Suma.Social
 {
     public class Startup
     {
+        const string ALLOW_ONLY_WEB = "AllowOnlyWeb";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -27,6 +29,17 @@ namespace Suma.Social
         {
 
             services.AddControllers();
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: ALLOW_ONLY_WEB,
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:4200")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    }
+                );
+            });
             //services.Configure<Key>(Configuration.GetSection("Key"));
 
             services.AddSingleton(GraphDatabase.Driver("bolt://localhost:7687", AuthTokens.Basic("neo4j", "5324164")));
@@ -69,6 +82,8 @@ namespace Suma.Social
             }
 
             app.UseRouting();
+
+            app.UseCors(ALLOW_ONLY_WEB);
 
             app.UseAuthentication();
             app.UseAuthorization();
