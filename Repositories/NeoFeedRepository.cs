@@ -28,10 +28,16 @@ namespace Suma.Social.Repositories
             try
             {
                 cursor = await session.RunAsync(
-                    $@"MATCH (:Person{{ id:{ postedUserId } }})-[Post]->(f:Feed) 
+                    @"MATCH (p:Person { id: $p.id })-[Post]->(f:Feed) 
                     RETURN f.id as id,
                         f.text as text,
-                        f.created as created"
+                        f.created as created",
+                    new
+                    {
+                        p = new Dictionary<string, object> {
+                            {"id", postedUserId}
+                        }
+                    }
                 );
                 feeds = await cursor.ToListAsync(r =>
                 {
@@ -50,6 +56,5 @@ namespace Suma.Social.Repositories
 
             return feeds;
         }
-
     }
 }
