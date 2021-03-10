@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Neo4j.Driver;
 using Suma.Social.Repositories;
+using Suma.Social.Services;
 
 namespace Suma.Social
 {
@@ -44,6 +45,7 @@ namespace Suma.Social
 
             services.AddSingleton(GraphDatabase.Driver("bolt://localhost:7687", AuthTokens.Basic("neo4j", "5324164")));
             services.AddScoped<INeoFeedRepository, NeoFeedRepository>();
+            services.AddScoped<IFeedService,FeedService>();
 
             var secret = Encoding.ASCII.GetBytes(Configuration["Key:Secret"]);
             services.AddAuthentication(a =>
