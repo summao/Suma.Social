@@ -27,7 +27,7 @@ namespace Suma.Social.Services
                 Id = Guid.NewGuid().ToString(),
                 Text = model.Text,
             };
-            return await _neoCommentRepository.InsertAsync(comment, commentorId, model.replyToFeedId);
+            return await _neoCommentRepository.InsertAsync(comment, commentorId, model.ReplyToFeedId);
         }
     }
 }

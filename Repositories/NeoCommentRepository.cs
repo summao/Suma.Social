@@ -25,9 +25,8 @@ namespace Suma.Social.Repositories
             var session = _driver.AsyncSession();
             var parameters = comment.AsDictionary();
             parameters.Add("commentorId", commentorId);
-            var query = "";
 
-            query = @"MATCH (f:Feed {id: $a.replyToFeedId})
+            var query = @"MATCH (f:Feed {id: $a.replyToFeedId})
                 MATCH (p:Person {id: $a.commentorId})
                 CREATE (p)-[:Comment]->(c:Comment {
                     id: $a.id, 
