@@ -4,8 +4,9 @@ using Suma.Social.Utils;
 
 namespace Suma.Social.Entities
 {
-    public class BaseEntities
+    public class BaseEntity
     {
+        public string Id { get; set; }
         public Dictionary<string, object> AsDictionary()
         {
             var properties = this.GetType().GetProperties();
