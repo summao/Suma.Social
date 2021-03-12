@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Suma.Social.Entities;
 using Suma.Social.Models.Comments;
@@ -8,6 +9,7 @@ namespace Suma.Social.Services
 {
     public interface ICommentService
     {
+        Task<List<Comment>> GetManyAsync(string feedId);
         Task<CreateCommentResponse> CreateAsync(CreateCommentRequest model, int commentorId);
     }
 
@@ -18,6 +20,10 @@ namespace Suma.Social.Services
         public CommentService(INeoCommentRepository neoCommentRepository)
         {
             _neoCommentRepository = neoCommentRepository;
+        }
+
+        public async Task<List<Comment>> GetManyAsync(string feedId) {
+            return await _neoCommentRepository.GetManyAsync(feedId);
         }
 
         public async Task<CreateCommentResponse> CreateAsync(CreateCommentRequest model, int commentorId)
