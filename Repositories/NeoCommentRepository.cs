@@ -9,8 +9,8 @@ namespace Suma.Social.Repositories
 {
     public interface INeoCommentRepository
     {
-        Task<CreateCommentResponse> InsertAsync(Comment comment, int commentorId, string replyToFeedId);
-        Task<List<Comment>> GetManyAsync(string feedId);
+        Task<CreateCommentResponse> InsertAsync(Comment comment, int commentorId, string replyToPostId);
+        Task<List<Comment>> GetManyAsync(string postId);
     }
 
     public class NeoCommentRepository : INeoCommentRepository
@@ -22,13 +22,13 @@ namespace Suma.Social.Repositories
             _driver = driver;
         }
 
-        public async Task<CreateCommentResponse> InsertAsync(Comment comment, int commentorId, string replyToFeedId)
+        public async Task<CreateCommentResponse> InsertAsync(Comment comment, int commentorId, string replyToPostId)
         {
             var session = _driver.AsyncSession();
             var parameters = comment.AsDictionary();
             parameters.Add("commentorId", commentorId);
 
-            var query = @"MATCH (f:Feed {id: $a.replyToFeedId})
+            var query = @"MATCH (f:Post {id: $a.replyToPostId})
                 MATCH (p:Person {id: $a.commentorId})
                 CREATE (p)-[:Comment]->(c:Comment {
                     id: $a.id, 
@@ -38,10 +38,10 @@ namespace Suma.Social.Repositories
                 RETURN c.id as CommentId,
                     c.text as Text,
                     c.created as Created,
-                    f.id as ReplyToFeedId,
+                    f.id as ReplyToPostId,
                     p.id as CommentorId";
 
-            parameters.Add("replyToFeedId", replyToFeedId);
+            parameters.Add("replyToPostId", replyToPostId);
 
             try
             {
@@ -53,7 +53,7 @@ namespace Suma.Social.Repositories
                         CommentId = r["CommentId"].As<string>(),
                         Text = r["Text"].As<string>(),
                         Created = r["Created"].As<DateTimeOffset>(),
-                        ReplyToFeedId = r["ReplyToFeedId"].As<string>(),
+                        ReplyToPostId = r["ReplyToPostId"].As<string>(),
                         CommentorId = r["CommentorId"].As<int>(),
                     }
                 );
@@ -64,14 +64,14 @@ namespace Suma.Social.Repositories
             }
         }
 
-        public async Task<List<Comment>> GetManyAsync(string feedId)
+        public async Task<List<Comment>> GetManyAsync(string postId)
         {
             var session = _driver.AsyncSession();
             var parameters = new Dictionary<string, object> {
-                {"feedId", feedId}
+                {"postId", postId}
             };
 
-            var query = @"MATCH (c:Comment)-[:Reply]->(f:Feed {id: $a.feedId})
+            var query = @"MATCH (c:Comment)-[:Reply]->(f:Post {id: $a.postId})
                 RETURN c.id as Id,
                     c.text as Text,
                     c.created as Created";

@@ -9,7 +9,7 @@ namespace Suma.Social.Services
 {
     public interface ICommentService
     {
-        Task<List<Comment>> GetManyAsync(string feedId);
+        Task<List<Comment>> GetManyAsync(string postId);
         Task<CreateCommentResponse> CreateAsync(CreateCommentRequest model, int commentorId);
     }
 
@@ -22,8 +22,9 @@ namespace Suma.Social.Services
             _neoCommentRepository = neoCommentRepository;
         }
 
-        public async Task<List<Comment>> GetManyAsync(string feedId) {
-            return await _neoCommentRepository.GetManyAsync(feedId);
+        public async Task<List<Comment>> GetManyAsync(string postId)
+        {
+            return await _neoCommentRepository.GetManyAsync(postId);
         }
 
         public async Task<CreateCommentResponse> CreateAsync(CreateCommentRequest model, int commentorId)
@@ -33,7 +34,7 @@ namespace Suma.Social.Services
                 Id = Guid.NewGuid().ToString(),
                 Text = model.Text,
             };
-            return await _neoCommentRepository.InsertAsync(comment, commentorId, model.ReplyToFeedId);
+            return await _neoCommentRepository.InsertAsync(comment, commentorId, model.ReplyToPostId);
         }
     }
 }

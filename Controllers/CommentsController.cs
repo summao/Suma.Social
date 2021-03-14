@@ -17,10 +17,10 @@ namespace Suma.Social.Controllers
             _commentService = commentService;
         }
 
-        [HttpGet("feed/{feedId}")]
-        public async Task<IActionResult> GetMany(string feedId)
+        [HttpGet("post/{postId}")]
+        public async Task<IActionResult> GetMany(string postId)
         {
-            var comments = await _commentService.GetManyAsync(feedId);
+            var comments = await _commentService.GetManyAsync(postId);
             return Ok(comments);
         }
 

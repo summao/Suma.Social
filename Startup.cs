@@ -44,8 +44,8 @@ namespace Suma.Social
             //services.Configure<Key>(Configuration.GetSection("Key"));
 
             services.AddSingleton(GraphDatabase.Driver("bolt://localhost:7687", AuthTokens.Basic("neo4j", "5324164")));
-            services.AddScoped<INeoFeedRepository, NeoFeedRepository>();
-            services.AddScoped<IFeedService,FeedService>();
+            services.AddScoped<INeoPostRepository, NeoPostRepository>();
+            services.AddScoped<IPostService, PostService>();
             services.AddScoped<INeoCommentRepository, NeoCommentRepository>();
             services.AddScoped<ICommentService, CommentService>();
 

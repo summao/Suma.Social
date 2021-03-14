@@ -6,28 +6,28 @@ using Suma.Social.Entities;
 
 namespace Suma.Social.Repositories
 {
-    public interface INeoFeedRepository
+    public interface INeoPostRepository
     {
-        Task<IEnumerable<Feed>> GetAsync(int postedUserId);
-        Task<Feed> InsertAsynce(Feed feed, int userId);
+        Task<IEnumerable<Post>> GetAsync(int postedUserId);
+        Task<Post> InsertAsynce(Post post, int userId);
     }
 
-    public class NeoFeedRepository : INeoFeedRepository
+    public class NeoPostRepository : INeoPostRepository
     {
         private readonly IDriver _driver;
 
-        public NeoFeedRepository(IDriver driver)
+        public NeoPostRepository(IDriver driver)
         {
             _driver = driver;
         }
 
-        public async Task<IEnumerable<Feed>> GetAsync(int postedUserId)
+        public async Task<IEnumerable<Post>> GetAsync(int postedUserId)
         {
             var session = _driver.AsyncSession();
             try
             {
                 var cursor = await session.RunAsync(
-                   @"MATCH (p:Person { id: $p.id })-[Post]->(f:Feed) 
+                   @"MATCH (p:Person { id: $p.id })-[Post]->(f:Post) 
                     RETURN f.id as id,
                         f.text as text,
                         f.created as created,
@@ -40,7 +40,7 @@ namespace Suma.Social.Repositories
                    }
                );
                 return await cursor.ToListAsync(r =>
-                     new Feed
+                     new Post
                      {
                          Id = r["id"].As<string>(),
                          Text = r["text"].As<string>(),
@@ -56,18 +56,18 @@ namespace Suma.Social.Repositories
 
         }
 
-        public async Task<Feed> InsertAsynce(Feed feed, int userId)
+        public async Task<Post> InsertAsynce(Post post, int userId)
         {
             var session = _driver.AsyncSession();
             try
             {
 
-                var parameters = feed.AsDictionary();
+                var parameters = post.AsDictionary();
                 parameters.Add("userId", userId);
 
                 var cursor = await session.RunAsync(
                     @"MATCH (p:Person{ id: $a.userId })
-                    CREATE (p)-[:Post]->(f:Feed {
+                    CREATE (p)-[:Post]->(f:Post {
                         id: $a.id , 
                         text: $a.text, 
                         created: datetime(),
@@ -80,7 +80,7 @@ namespace Suma.Social.Repositories
                 );
 
                 return await cursor.SingleAsync(r =>
-                    new Feed
+                    new Post
                     {
                         Id = r["id"].As<string>(),
                         Text = r["text"].As<string>(),
