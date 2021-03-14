@@ -25,7 +25,7 @@ namespace Suma.Social.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreatePostRequest model)
+        public async Task<IActionResult> Create([FromForm] CreatePostRequest model)
         {
             var post = await _postService.CreateAsync(model, userId);
             return Created(post.Id, post);

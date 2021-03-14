@@ -16,10 +16,15 @@ namespace Suma.Social.Services
     public class PostService : IPostService
     {
         private readonly INeoPostRepository _neoPostRepository;
+        private readonly IImageService _imageService;
 
-        public PostService(INeoPostRepository neoPostRepository)
+        public PostService(
+            INeoPostRepository neoPostRepository,
+            IImageService imageService
+        )
         {
             _neoPostRepository = neoPostRepository;
+            _imageService = imageService;
         }
 
         public async Task<IEnumerable<Post>> GetListAsync(int postedUserId)
@@ -29,11 +34,18 @@ namespace Suma.Social.Services
 
         public async Task<Post> CreateAsync(CreatePostRequest model, int postedUserId)
         {
+            string imageName = null;
+            if (model.Image != null)
+            {
+                imageName = await _imageService.AddOneAsync(model.Image);
+            }
+
             var post = new Post
             {
                 Id = Guid.NewGuid().ToString(),
+                PrivacyLevel = model.PrivacyLevel,
                 Text = model.Text,
-                PrivacyLevel = model.PrivacyLevel
+                ImageName = imageName,
             };
             return await _neoPostRepository.InsertAsynce(post, postedUserId);
         }

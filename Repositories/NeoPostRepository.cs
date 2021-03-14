@@ -28,10 +28,11 @@ namespace Suma.Social.Repositories
             {
                 var cursor = await session.RunAsync(
                    @"MATCH (p:Person { id: $p.id })-[Post]->(f:Post) 
-                    RETURN f.id as id,
-                        f.text as text,
-                        f.created as created,
-                        f.privacyLevel as privacyLevel",
+                    RETURN f.id as Id,
+                        f.created as Created,
+                        f.privacyLevel as PrivacyLevel,
+                        f.text as Text,
+                        f.imageName as ImageName",
                    new
                    {
                        p = new Dictionary<string, object> {
@@ -42,10 +43,11 @@ namespace Suma.Social.Repositories
                 return await cursor.ToListAsync(r =>
                      new Post
                      {
-                         Id = r["id"].As<string>(),
-                         Text = r["text"].As<string>(),
-                         Created = r["created"].As<DateTimeOffset>(),
-                         PrivacyLevel = r["privacyLevel"].As<string>(),
+                         Id = r["Id"].As<string>(),
+                         Created = r["Created"].As<DateTimeOffset>(),
+                         PrivacyLevel = r["PrivacyLevel"].As<string>(),
+                         Text = r["Text"].As<string>(),
+                         ImageName = r["ImageName"].As<string>(),
                      }
                 );
             }
@@ -69,23 +71,27 @@ namespace Suma.Social.Repositories
                     @"MATCH (p:Person{ id: $a.userId })
                     CREATE (p)-[:Post]->(f:Post {
                         id: $a.id , 
-                        text: $a.text, 
                         created: datetime(),
-                        privacyLevel: $a.privacyLevel})
-                    RETURN f.id as id,
-                        f.text as text,
-                        f.created as created,
-                        f.privacyLevel as privacyLevel",
+                        privacyLevel: $a.privacyLevel,
+                        text: $a.text,
+                        imageName: $a.imageName
+                    })
+                    RETURN f.id as Id,
+                        f.created as Created,
+                        f.privacyLevel as PrivacyLevel,
+                        f.text as Text,
+                        f.imageName as ImageName",
                     new { a = parameters }
                 );
 
                 return await cursor.SingleAsync(r =>
                     new Post
                     {
-                        Id = r["id"].As<string>(),
-                        Text = r["text"].As<string>(),
-                        Created = r["created"].As<DateTimeOffset>(),
-                        PrivacyLevel = r["privacyLevel"].As<string>(),
+                        Id = r["Id"].As<string>(),
+                        Created = r["Created"].As<DateTimeOffset>(),
+                        PrivacyLevel = r["PrivacyLevel"].As<string>(),
+                        Text = r["Text"].As<string>(),
+                        ImageName = r["ImageName"].As<string>(),
                     }
                 );
             }
