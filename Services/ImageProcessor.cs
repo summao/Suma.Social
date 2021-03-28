@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
+using SkiaSharp;
 
 namespace Suma.Social.Services
 {
@@ -28,6 +29,12 @@ namespace Suma.Social.Services
             }
 
             return returnMemoryStream;
+        }
+
+        public async Task WriteTextOnImage()
+        {
+            var filePath = Path.Combine(Path.GetFullPath("Templates"), "sfinger.jpg");
+            var bitmap = SKBitmap.Decode(filePath);
         }
     }
 }
