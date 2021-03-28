@@ -50,6 +50,7 @@ namespace Suma.Social
             services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<IImageRepository, ImageRepository>();
             services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<IImageProcessor, ImageProcessor>();
 
             var secret = Encoding.ASCII.GetBytes(Configuration["Key:Secret"]);
             services.AddAuthentication(a =>

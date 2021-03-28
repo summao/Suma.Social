@@ -6,7 +6,7 @@ namespace Suma.Social.Repositories
 {
     public interface IImageRepository
     {
-        Task<string> InsertOneAsync(IFormFile file);
+        Task<string> InsertOneAsync(MemoryStream file);
         Task<byte[]> GetOneAsync(string fileName);
     }
 
@@ -14,13 +14,14 @@ namespace Suma.Social.Repositories
     {
         private const string FILE_PATH = "UploadImages";
 
-        public async Task<string> InsertOneAsync(IFormFile file)
+        public async Task<string> InsertOneAsync(MemoryStream file)
         {
             var fileName = Path.GetRandomFileName();
             var filePath = Path.Combine(Path.GetFullPath(FILE_PATH), fileName);
 
             using (var stream = File.Create(filePath))
             {
+                file.Position = 0;
                 await file.CopyToAsync(stream);
             }
 
