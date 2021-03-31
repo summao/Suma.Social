@@ -11,10 +11,12 @@ namespace Suma.Social.Controllers
     public class ImagesController : ControllerBase
     {
         private readonly IImageService _imageService;
+        private readonly IImageProcessor _imageProcessor;
 
-        public ImagesController(IImageService imageService)
+        public ImagesController(IImageService imageService, IImageProcessor imageProcessor)
         {
             _imageService = imageService;
+            _imageProcessor = imageProcessor;
         }
 
         [HttpPost]
@@ -37,6 +39,13 @@ namespace Suma.Social.Controllers
             {
                 return BadRequest($"file not found :{imageName}");
             }
+        }
+
+        [HttpGet("a")]
+        public IActionResult A()
+        {
+            var image = _imageProcessor.WriteTextOnImage();
+            return File(image, "image/jpeg");
         }
     }
 }
