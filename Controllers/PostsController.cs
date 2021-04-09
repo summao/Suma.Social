@@ -17,8 +17,16 @@ namespace Suma.Social.Controllers
             _postService = postService;
         }
 
+        // fix to get friend's posts
         [HttpGet]
         public async Task<IActionResult> Get()
+        {
+            var posts = await _postService.GetListAsync(userId);
+            return Ok(posts);
+        }
+
+        [HttpGet("poster")]
+        public async Task<IActionResult> GetByPoster()
         {
             var posts = await _postService.GetListAsync(userId);
             return Ok(posts);
