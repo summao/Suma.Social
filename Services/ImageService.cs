@@ -7,6 +7,7 @@ namespace Suma.Social.Services
 {
     public interface IImageService
     {
+        /// <returns>A string of file name</returns>
         Task<string> AddOneAsync(IFormFile file);
         Task<byte[]> GetOneAsync(string imageName);
     }

@@ -51,6 +51,8 @@ namespace Suma.Social
             services.AddScoped<IImageRepository, ImageRepository>();
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IImageProcessor, ImageProcessor>();
+            services.AddScoped<IPersonNeoRepository, PersonNeoRepository>();
+            services.AddScoped<IPersonService, PersonService>();
 
             var secret = Encoding.ASCII.GetBytes(Configuration["Key:Secret"]);
             services.AddAuthentication(a =>

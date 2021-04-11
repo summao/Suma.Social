@@ -14,7 +14,20 @@ namespace Suma.Social.Repositories
             _driver = driver;
         }
 
-        public async Task<T> ExecuteSingleAsync<T>(string query,Dictionary<string, object> parameters, Func<IRecord,T> func)
+        public async Task ExecuteNoneQueryAsync(string query, Dictionary<string, object> parameters)
+        {
+            var session = _driver.AsyncSession();
+            try
+            {
+                await session.RunAsync(query, new { a = parameters });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+        }
+
+        public async Task<T> ExecuteSingleAsync<T>(string query, Dictionary<string, object> parameters, Func<IRecord, T> func)
         {
             var session = _driver.AsyncSession();
             try
@@ -29,7 +42,7 @@ namespace Suma.Social.Repositories
             }
         }
 
-        public async Task<List<T>> ExecuteListAsync<T>(string query,Dictionary<string, object> parameters, Func<IRecord,T> func)
+        public async Task<List<T>> ExecuteListAsync<T>(string query, Dictionary<string, object> parameters, Func<IRecord, T> func)
         {
             var session = _driver.AsyncSession();
             try

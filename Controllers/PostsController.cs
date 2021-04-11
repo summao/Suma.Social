@@ -11,7 +11,6 @@ namespace Suma.Social.Controllers
     {
         private readonly IPostService _postService;
 
-        const int userId = 1;
         public PostsController(IPostService postService)
         {
             _postService = postService;
@@ -21,21 +20,21 @@ namespace Suma.Social.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var posts = await _postService.GetListAsync(userId);
+            var posts = await _postService.GetListAsync(PersonsController.userId);
             return Ok(posts);
         }
 
         [HttpGet("poster")]
         public async Task<IActionResult> GetByPoster()
         {
-            var posts = await _postService.GetListAsync(userId);
+            var posts = await _postService.GetListAsync(PersonsController.userId);
             return Ok(posts);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] CreatePostRequest model)
         {
-            var post = await _postService.CreateAsync(model, userId);
+            var post = await _postService.CreateAsync(model, PersonsController.userId);
             return Created(post.Id, post);
         }
     }
