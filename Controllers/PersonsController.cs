@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Suma.Social.Models.Persons;
 using Suma.Social.Services;
 
 namespace Suma.Social.Controllers
@@ -18,10 +18,15 @@ namespace Suma.Social.Controllers
         }
 
         [HttpPut("profile-image")]
-        public async Task<IActionResult> UploadProfileImage(IFormFile profileImage)
+        public async Task<IActionResult> UpdateProfileImage([FromForm] UpdateProfileImageRequest dto)
         {
-            var profileImageName = await _personService.UpdateProfileImageAsync(profileImage, userId);
-            return Ok(profileImageName);
+            var profileImageName = await _personService.UpdateProfileImageAsync(dto.ProfileImage, userId);
+            var resDto = new UpdateProfileImageResponse 
+            {
+                ProfileImageName = profileImageName
+            };
+            
+            return Ok(resDto);
         }
     }
 }

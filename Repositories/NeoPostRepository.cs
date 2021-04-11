@@ -32,7 +32,8 @@ namespace Suma.Social.Repositories
                         f.created as Created,
                         f.privacyLevel as PrivacyLevel,
                         f.text as Text,
-                        f.imageName as ImageName",
+                        f.imageName as ImageName,
+                        p.profileImageName as ProfileImageName",
                    new
                    {
                        p = new Dictionary<string, object> {
@@ -48,6 +49,7 @@ namespace Suma.Social.Repositories
                          PrivacyLevel = r["PrivacyLevel"].As<string>(),
                          Text = r["Text"].As<string>(),
                          ImageName = r["ImageName"].As<string>(),
+                         ProfileImageName = r["ProfileImageName"].As<string>(),
                      }
                 );
             }
