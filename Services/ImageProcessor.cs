@@ -27,6 +27,10 @@ namespace Suma.Social.Services
                         await copy.SaveAsync(returnMemoryStream, new JpegEncoder());
                     }
                 }
+                else
+                {
+                    await image.SaveAsync(returnMemoryStream, new JpegEncoder());
+                }
             }
 
             return returnMemoryStream;
