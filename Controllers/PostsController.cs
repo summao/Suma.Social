@@ -1,12 +1,15 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Suma.Social.Models.Posts;
 using Suma.Social.Services;
+using Suma.Social.Utils;
 
 namespace Suma.Social.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class PostsController : ControllerBase
     {
         private readonly IPostService _postService;
@@ -27,14 +30,14 @@ namespace Suma.Social.Controllers
         [HttpGet("poster")]
         public async Task<IActionResult> GetByPoster()
         {
-            var posts = await _postService.GetListAsync(PersonsController.userId);
+            var posts = await _postService.GetListAsync(User.GetUserId());
             return Ok(posts);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] CreatePostRequest model)
         {
-            var post = await _postService.CreateAsync(model, PersonsController.userId);
+            var post = await _postService.CreateAsync(model, User.GetUserId());
             return Created(post.Id, post);
         }
     }

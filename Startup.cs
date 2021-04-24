@@ -54,7 +54,7 @@ namespace Suma.Social
             services.AddScoped<IPersonNeoRepository, PersonNeoRepository>();
             services.AddScoped<IPersonService, PersonService>();
 
-            var secret = Encoding.ASCII.GetBytes(Configuration["Key:Secret"]);
+            var secret = Encoding.ASCII.GetBytes(Configuration["JwtTokenConfig:Secret"]);
             services.AddAuthentication(a =>
             {
                 a.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
