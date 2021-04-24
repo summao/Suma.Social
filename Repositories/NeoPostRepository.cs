@@ -8,69 +8,74 @@ namespace Suma.Social.Repositories
 {
     public interface INeoPostRepository
     {
-        Task<IEnumerable<Post>> GetAsync(int postedUserId);
+        Task<Post> GetOneAsyncByPostId(string postId);
+        Task<IEnumerable<Post>> GetManyAsyncByPosterId(int posterId);
         Task<Post> InsertAsynce(Post post, int userId);
     }
 
-    public class NeoPostRepository : INeoPostRepository
+    public class NeoPostRepository : BaseNeoRepository, INeoPostRepository
     {
-        private readonly IDriver _driver;
-
-        public NeoPostRepository(IDriver driver)
+        public NeoPostRepository(IDriver driver) : base(driver)
         {
-            _driver = driver;
+
         }
 
-        public async Task<IEnumerable<Post>> GetAsync(int postedUserId)
+        public async Task<Post> GetOneAsyncByPostId(string postId)
         {
-            var session = _driver.AsyncSession();
-            try
-            {
-                var cursor = await session.RunAsync(
-                   @"MATCH (p:Person { id: $p.id })-[Post]->(f:Post) 
+            var query = @"MATCH (p:Person)-[Post]->(f:Post {id: $a.postId})
+                RETURN f.id as Id,
+                    f.privacyLevel as PrivacyLevel,
+                    f.text as Text,
+                    f.created as Created,
+                    p.id as PosterId";
+
+            var parameters = new Dictionary<string, object> {
+                {"postId", postId}
+            };
+
+            return await ExecuteSingleAsync(query, parameters, r =>
+                new Post
+                {
+                    Id = r["Id"].As<string>(),
+                    PrivacyLevel = r["PrivacyLevel"].As<string>(),
+                    Text = r["Text"].As<string>(),
+                    Created = r["Created"].As<DateTimeOffset>(),
+                    PosterId = r["PosterId"].As<int>(),
+                }
+            );
+        }
+
+        public async Task<IEnumerable<Post>> GetManyAsyncByPosterId(int posterId)
+        {
+            var query = @"MATCH (p:Person { id: $p.id })-[Post]->(f:Post) 
                     RETURN f.id as Id,
                         f.created as Created,
                         f.privacyLevel as PrivacyLevel,
                         f.text as Text,
                         f.imageName as ImageName,
-                        p.profileImageName as ProfileImageName",
-                   new
-                   {
-                       p = new Dictionary<string, object> {
-                            {"id", postedUserId}
-                       }
-                   }
-               );
-                return await cursor.ToListAsync(r =>
-                     new Post
-                     {
-                         Id = r["Id"].As<string>(),
-                         Created = r["Created"].As<DateTimeOffset>(),
-                         PrivacyLevel = r["PrivacyLevel"].As<string>(),
-                         Text = r["Text"].As<string>(),
-                         ImageName = r["ImageName"].As<string>(),
-                         ProfileImageName = r["ProfileImageName"].As<string>(),
-                     }
-                );
-            }
-            finally
-            {
-                await session.CloseAsync();
-            }
+                        p.profileImageName as ProfileImageName";
+
+            var parameters = new Dictionary<string, object> {
+                 {"id", posterId}
+            };
+
+            return await ExecuteListAsync(query, parameters, r =>
+                new Post
+                {
+                    Id = r["Id"].As<string>(),
+                    Created = r["Created"].As<DateTimeOffset>(),
+                    PrivacyLevel = r["PrivacyLevel"].As<string>(),
+                    Text = r["Text"].As<string>(),
+                    ImageName = r["ImageName"].As<string>(),
+                    ProfileImageName = r["ProfileImageName"].As<string>(),
+                }
+            );
 
         }
 
         public async Task<Post> InsertAsynce(Post post, int userId)
         {
-            var session = _driver.AsyncSession();
-            try
-            {
-
-                var parameters = post.AsDictionary();
-                parameters.Add("userId", userId);
-
-                var cursor = await session.RunAsync(
-                    @"MATCH (p:Person{ id: $a.userId })
+            var query = @"MATCH (p:Person{ id: $a.userId })
                     CREATE (p)-[:Post]->(f:Post {
                         id: $a.id , 
                         created: datetime(),
@@ -82,25 +87,21 @@ namespace Suma.Social.Repositories
                         f.created as Created,
                         f.privacyLevel as PrivacyLevel,
                         f.text as Text,
-                        f.imageName as ImageName",
-                    new { a = parameters }
-                );
+                        f.imageName as ImageName";
 
-                return await cursor.SingleAsync(r =>
-                    new Post
-                    {
-                        Id = r["Id"].As<string>(),
-                        Created = r["Created"].As<DateTimeOffset>(),
-                        PrivacyLevel = r["PrivacyLevel"].As<string>(),
-                        Text = r["Text"].As<string>(),
-                        ImageName = r["ImageName"].As<string>(),
-                    }
-                );
-            }
-            finally
-            {
-                await session.CloseAsync();
-            }
+            var parameters = post.AsDictionary();
+            parameters.Add("userId", userId);
+
+            return await ExecuteSingleAsync(query, parameters, r =>
+                new Post
+                {
+                    Id = r["Id"].As<string>(),
+                    Created = r["Created"].As<DateTimeOffset>(),
+                    PrivacyLevel = r["PrivacyLevel"].As<string>(),
+                    Text = r["Text"].As<string>(),
+                    ImageName = r["ImageName"].As<string>(),
+                }
+            );
         }
     }
 }

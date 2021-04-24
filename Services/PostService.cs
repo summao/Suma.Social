@@ -9,8 +9,9 @@ namespace Suma.Social.Services
 {
     public interface IPostService
     {
-        Task<Post> CreateAsync(CreatePostRequest model, int userId);
+        Task<Post> GetOneByPostIdAsync(string postId);
         Task<IEnumerable<Post>> GetListAsync(int postedUserId);
+        Task<Post> CreateAsync(CreatePostRequest model, int userId);
     }
 
     public class PostService : IPostService
@@ -27,9 +28,14 @@ namespace Suma.Social.Services
             _imageService = imageService;
         }
 
+        public async Task<Post> GetOneByPostIdAsync(string postId)
+        {
+            return await _neoPostRepository.GetOneAsyncByPostId(postId);
+        }
+
         public async Task<IEnumerable<Post>> GetListAsync(int postedUserId)
         {
-            return await _neoPostRepository.GetAsync(postedUserId);
+            return await _neoPostRepository.GetManyAsyncByPosterId(postedUserId);
         }
 
         public async Task<Post> CreateAsync(CreatePostRequest model, int postedUserId)
