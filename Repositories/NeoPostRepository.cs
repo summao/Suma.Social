@@ -47,7 +47,7 @@ namespace Suma.Social.Repositories
 
         public async Task<IEnumerable<Post>> GetManyAsyncByPosterId(int posterId)
         {
-            var query = @"MATCH (p:Person { id: $p.id })-[Post]->(f:Post) 
+            var query = @"MATCH (p:Person { id: $a.id })-[Post]->(f:Post) 
                     RETURN f.id as Id,
                         f.created as Created,
                         f.privacyLevel as PrivacyLevel,
